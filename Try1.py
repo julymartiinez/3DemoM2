@@ -69,18 +69,22 @@ class RoamingRalphDemo(ShowBase):
 
         # Create the main character, Ralph
         ralphStartPos = self.environ.find("**/start_point").getPos()
-        self.ralph = loader.loadModel("models/queen")
+        self.ralph = Actor("models/ralph",
+                           {"run": "models/ralph-run",
+                            "walk": "models/ralph-walk"})
         self.ralph.reparentTo(render)
-        #self.ralph.setScale(.2)
+        self.ralph.setScale(.2)
         self.ralph.setPos(ralphStartPos + (0, 0, 0.5))
 
         #Create the fairy.
         pnode2StartPos = self.environ.find("**/start_point").getPos()
-        self.pnode2 = loader.loadModel("models/pawn")
+        self.pnode2 = Actor("models/ralph",
+                           {"run": "models/ralph-run",
+                            "walk": "models/ralph-walk"})
         self.pnode2.reparentTo(self.ralph)
         self.pnode2.setScale(0.5)
         self.ground = 1.2
-        self.pnode2.setPos(0,0,self.ground)
+        self.pnode2.setPos(3,0,self.ground)
         self.vz = 0
 
         # Create a floater object, which floats 2 units above ralph.  We
@@ -143,12 +147,12 @@ class RoamingRalphDemo(ShowBase):
         self.cTrav.addCollider(self.camGroundColNp, self.camGroundHandler)
 
         # Uncomment this line to see the collision rays
-        #self.ralphGroundColNp.show()
-        #self.camGroundColNp.show()
+        self.ralphGroundColNp.show()
+        self.camGroundColNp.show()
 
         # Uncomment this line to show a visual representation of the
         # collisions occuring
-        #self.cTrav.showCollisions(render)
+        self.cTrav.showCollisions(render)
 
         # Create some lighting
         ambientLight = AmbientLight("ambientLight")
@@ -200,12 +204,12 @@ class RoamingRalphDemo(ShowBase):
 
         if self.keyMap["forward"] or self.keyMap["left"] or self.keyMap["right"]:
             if self.isMoving is False:
-                #self.ralph.loop("run")
+                self.ralph.loop("run")
                 self.isMoving = True
         else:
             if self.isMoving:
-                #self.ralph.stop()
-                #self.ralph.pose("walk", 5)
+                self.ralph.stop()
+                self.ralph.pose("walk", 5)
                 self.isMoving = False
 
         # If the camera is too far from ralph, move it closer.
@@ -225,7 +229,7 @@ class RoamingRalphDemo(ShowBase):
         # Normally, we would have to call traverse() to check for collisions.
         # However, the class ShowBase that we inherit from has a task to do
         # this for us, if we assign a CollisionTraverser to self.cTrav.
-        #self.cTrav.traverse(render)
+        self.cTrav.traverse(render)
 
         # Adjust ralph's Z coordinate.  If ralph's ray hit terrain,
         # update his Z. If it hit anything else, or didn't hit anything, put
