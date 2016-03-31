@@ -77,10 +77,10 @@ class RoamingRalphDemo(ShowBase):
         #Create the fairy.
         pnode2StartPos = self.environ.find("**/start_point").getPos()
         self.pnode2 = loader.loadModel("models/pawn")
-        self.pnode2.reparentTo(render)
+        self.pnode2.reparentTo(self.ralph)
         self.pnode2.setScale(0.5)
-        self.ground = -1
-        self.pnode2.setPos(pnode2StartPos + (0, 0, 1.5))
+        self.ground = 1.2
+        self.pnode2.setPos(0,0,self.ground)
         self.vz = 0
 
         # Create a floater object, which floats 2 units above ralph.  We
@@ -254,6 +254,15 @@ class RoamingRalphDemo(ShowBase):
         # but it should also try to stay horizontal, so look at
         # a floater which hovers above ralph's head.
         self.camera.lookAt(self.floater)
+
+        # impulse
+        if self.pnode2.getZ() <= self.ground:
+            self.vz = 6.0
+        else:
+            # gravity
+            self.vz = self.vz - 20.0 * dt
+        # integrate position
+        self.pnode2.setZ(self.pnode2.getZ() + self.vz * dt)
 
         return task.cont
 
