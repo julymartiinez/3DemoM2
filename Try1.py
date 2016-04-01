@@ -20,24 +20,14 @@ from panda3d.core import CollisionHandlerQueue, CollisionRay
 from panda3d.core import Filename, AmbientLight, DirectionalLight
 from panda3d.core import PandaNode, NodePath, Camera, TextNode
 from panda3d.core import CollideMask
+from panda3d.core import PerspectiveLens, TextNode, \
+TexGenAttrib, TextureStage, TransparencyAttrib, LPoint3, Texture
 from direct.gui.OnscreenText import OnscreenText
 from direct.actor.Actor import Actor
 import random
 import sys
 import os
 import math
-
-# Function to put instructions on the screen.
-def addInstructions(pos, msg):
-    return OnscreenText(text=msg, style=1, fg=(1, 1, 1, 1), scale=.05,
-                        shadow=(0, 0, 0, 1), parent=base.a2dTopLeft,
-                        pos=(0.08, -pos - 0.04), align=TextNode.ALeft)
-
-# Function to put title on the screen.
-def addTitle(text):
-    return OnscreenText(text=text, style=1, fg=(1, 1, 1, 1), scale=.07,
-                        parent=base.a2dBottomRight, align=TextNode.ARight,
-                        pos=(-0.1, 0.09), shadow=(0, 0, 0, 1))
 
 
 class RoamingRalphDemo(ShowBase):
@@ -77,7 +67,6 @@ class RoamingRalphDemo(ShowBase):
         self.ralph.setPos(ralphStartPos + (0, 0, 0.5))
 
         #Create the fairy.
-        pnode2StartPos = self.environ.find("**/start_point").getPos()
         self.pnode2 = Actor("models/ralph",
                            {"run": "models/ralph-run",
                             "walk": "models/ralph-walk"})
@@ -92,6 +81,20 @@ class RoamingRalphDemo(ShowBase):
         self.floater = NodePath(PandaNode("floater"))
         self.floater.reparentTo(self.ralph)
         self.floater.setZ(2.0)
+
+        self.wizard = [] #list that contains the wizards
+
+        wizards = self.loader.loadModel("models/eve")
+        #load the random wizards
+        for i in range(0,10):
+            pos = LPoint3((random.random() - 0.5) * 9,
+                         (random.random() - 0.5) * 9,
+                         random.random() * 8)
+            w = wizards.copy_to(self.render)
+            w.setScale(.2)
+            w.setPos(pos)
+            w.reparentTo(self.render)
+            self.wizard.append(w)
 
         # Accept the control keys for movement and rotation
 
