@@ -86,6 +86,11 @@ class RoamingRalphDemo(ShowBase):
         self.ground = 1.2
         self.pnode2.setPos(3,0,self.ground)
         self.vz = 0
+        self.vx = 0
+        self.vy = 0
+        self.angle = 0
+        self.speed = (2*3.1416)/10
+        self.radius = 2;
 
         # Create a floater object, which floats 2 units above ralph.  We
         # use this as a target for the camera to look at.
@@ -147,12 +152,12 @@ class RoamingRalphDemo(ShowBase):
         self.cTrav.addCollider(self.camGroundColNp, self.camGroundHandler)
 
         # Uncomment this line to see the collision rays
-        self.ralphGroundColNp.show()
-        self.camGroundColNp.show()
+        #self.ralphGroundColNp.show()
+        #self.camGroundColNp.show()
 
         # Uncomment this line to show a visual representation of the
         # collisions occuring
-        self.cTrav.showCollisions(render)
+        #self.cTrav.showCollisions(render)
 
         # Create some lighting
         ambientLight = AmbientLight("ambientLight")
@@ -265,6 +270,13 @@ class RoamingRalphDemo(ShowBase):
         else:
             # gravity
             self.vz = self.vz - 20.0 * dt
+
+        self.angle += self.speed*dt
+		#http://answers.unity3d.com/questions/596671/circular-rotation-via-the-mathematical-circle-equa.html
+		# Got the formula from the link above
+        self.pnode2.setX(math.cos(self.angle)*self.radius)
+        self.pnode2.setY(math.sin(self.angle)*self.radius)
+
         # integrate position
         self.pnode2.setZ(self.pnode2.getZ() + self.vz * dt)
 
