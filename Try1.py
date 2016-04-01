@@ -65,21 +65,22 @@ class RoamingRalphDemo(ShowBase):
         self.ralph.reparentTo(render)
         self.ralph.setScale(.2)
         self.ralph.setPos(ralphStartPos + (0, 0, 0.5))
+        self.ground = 1.2
 
         #Create the fairy.
-        self.pnode2 = Actor("models/ralph",
-                           {"run": "models/ralph-run",
-                            "walk": "models/ralph-walk"})
-        self.pnode2.reparentTo(self.ralph)
-        self.pnode2.setScale(0.5)
-        self.ground = 1.2
-        self.pnode2.setPos(3,0,self.ground)
-        self.vz = 0
-        self.vx = 0
-        self.vy = 0
-        self.angle = 0
-        self.speed = (2*3.1416)/10
-        self.radius = 2;
+        # self.pnode2 = Actor("models/ralph",
+        #                    {"run": "models/ralph-run",
+        #                     "walk": "models/ralph-walk"})
+        # self.pnode2.reparentTo(self.ralph)
+        # self.pnode2.setScale(0.5)
+        # self.ground = 1.2
+        # self.pnode2.setPos(3,0,self.ground)
+        # self.vz = 0
+        # self.vx = 0
+        # self.vy = 0
+        # self.angle = 0
+        # self.speed = (2*3.1416)/10
+        # self.radius = 2;
 
         # Create a floater object, which floats 2 units above ralph.  We
         # use this as a target for the camera to look at.
@@ -91,15 +92,31 @@ class RoamingRalphDemo(ShowBase):
 
         wizards = self.loader.loadModel("models/eve")
         #load the random wizards
-        for i in range(0,10):
-            pos = LPoint3((random.random() - 0.5) * 9,
-                         (random.random() - 0.5) * 9,
-                         random.random() * 8)
+        for i in range(0,20):
+            pos = LPoint3((random.random()-1) * 180,
+                         (random.random()-1) * 180,
+                         self.ground)
             w = wizards.copy_to(self.render)
-            w.setScale(.2)
+            w.setScale(0.5)
             w.setPos(pos)
+            w.setH(0)
             w.reparentTo(self.render)
             self.wizard.append(w)
+
+            #Create the fairy.
+            self.pnode2 = self.loader.loadModel("models/eve")
+            self.pnode2.reparentTo(w)
+            self.pnode2.setScale(0.5)
+            self.ground = 1.2
+            self.pnode2.setPos(3,0,self.ground)
+            self.vz = 0
+            self.vx = 0
+            self.vy = 0
+            self.angle = 0
+            self.speed = (2*3.1416)/10
+            self.radius = 2;
+
+
 
         # Accept the control keys for movement and rotation
 
@@ -230,9 +247,9 @@ class RoamingRalphDemo(ShowBase):
         if camdist > 10.0:
             self.camera.setPos(self.camera.getPos() + camvec * (camdist - 10))
             camdist = 10.0
-        if camdist < 5.0:
-            self.camera.setPos(self.camera.getPos() - camvec * (5 - camdist))
-            camdist = 5.0
+        # if camdist < 5.0:
+        #     self.camera.setPos(self.camera.getPos() - camvec * (5 - camdist))
+        #     camdist = 5.0
 
         # Normally, we would have to call traverse() to check for collisions.
         # However, the class ShowBase that we inherit from has a task to do
@@ -251,6 +268,9 @@ class RoamingRalphDemo(ShowBase):
         else:
             self.ralph.setPos(startpos)
 
+        #position of the Wizard
+
+
         # Keep the camera at one foot above the terrain,
         # or two feet above ralph, whichever is greater.
 
@@ -267,21 +287,22 @@ class RoamingRalphDemo(ShowBase):
         # a floater which hovers above ralph's head.
         self.camera.lookAt(self.floater)
 
-        # impulse
-        if self.pnode2.getZ() <= self.ground:
-            self.vz = 6.0
-        else:
-            # gravity
-            self.vz = self.vz - 20.0 * dt
+        for i in range(0,10):
+            # impulse
+            if self.pnode2.getZ() <= self.ground:
+                self.vz = 6.0
+            else:
+                # gravity
+                self.vz = self.vz - 20.0 * dt
 
-        self.angle += self.speed*dt
-		#http://answers.unity3d.com/questions/596671/circular-rotation-via-the-mathematical-circle-equa.html
-		# Got the formula from the link above
-        self.pnode2.setX(math.cos(self.angle)*self.radius)
-        self.pnode2.setY(math.sin(self.angle)*self.radius)
+            self.angle += self.speed*dt
+            #http://answers.unity3d.com/questions/596671/circular-rotation-via-the-mathematical-circle-equa.html
+            # Got the formula from the link above
+            self.pnode2.setX(math.cos(self.angle)*self.radius)
+            self.pnode2.setY(math.sin(self.angle)*self.radius)
 
-        # integrate position
-        self.pnode2.setZ(self.pnode2.getZ() + self.vz * dt)
+            # integrate position
+            self.pnode2.setZ(self.pnode2.getZ() + self.vz * dt)
 
         return task.cont
 
